@@ -633,6 +633,28 @@ document.addEventListener('DOMContentLoaded', () => {
         renderPeopleList();
     });
 
+    // 9. Ocultar/Mostrar Menus (Espaço de Tela)
+    const btnToggleMenu = document.getElementById('fab-menu-toggle');
+    const topMenus = document.getElementById('top-menus');
+    
+    // Auto-ocultar no mobile por padrão para dar espaço total à timeline
+    if (window.innerWidth <= 768) {
+        topMenus.classList.add('hidden');
+        btnToggleMenu.innerText = '⚙️ Mostrar Menus';
+    }
+
+    btnToggleMenu.addEventListener('click', () => {
+        if (topMenus.classList.contains('hidden')) {
+            topMenus.classList.remove('hidden');
+            btnToggleMenu.innerText = '👁️ Esconder Menus';
+        } else {
+            topMenus.classList.add('hidden');
+            btnToggleMenu.innerText = '⚙️ Mostrar Menus';
+        }
+        // Redraw no timeline para ele ocupar o novo espaço vertical
+        setTimeout(() => timeline.redraw(), 50);
+    });
+
     // Fix render inicial
     setTimeout(() => {
         timeline.redraw();

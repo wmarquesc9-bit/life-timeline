@@ -19,12 +19,14 @@
 </head>
 <body>
     <div class="app-container">
-        <!-- Header -->
-        <header class="app-header">
-            <div class="header-title">
-                <h1>Life Timeline</h1>
-                <span class="subtitle">Personal CRM & Events (v17)</span>
-            </div>
+        <!-- Wrapper para ocultar/mostrar menus -->
+        <div id="top-menus">
+            <!-- Header -->
+            <header class="app-header">
+                <div class="header-title">
+                    <h1>Life Timeline</h1>
+                    <span class="subtitle">Personal CRM & Events (v18)</span>
+                </div>
             <div class="header-controls">
                 <button id="btn-export-opml" class="btn btn-secondary btn-small">📑 OPML</button>
                 <button id="btn-export-text" class="btn btn-secondary btn-small">📄 Texto</button>
@@ -78,6 +80,7 @@
             <label class="cat-toggle"><input type="checkbox" value="Patrimônio" checked> Patrimônio</label>
             <label class="cat-toggle"><input type="checkbox" value="Diversos" checked> Diversos</label>
         </div>
+        </div> <!-- End top menus wrapper -->
 
         <!-- Main Workspace -->
         <main class="workspace">
@@ -142,6 +145,9 @@
             </div>
         </div>
     </div>
+
+    <!-- Botão Flutuante de Menu -->
+    <button id="fab-menu-toggle" class="fab-btn">👁️ Esconder Menus</button>
 
     <!-- Vis Timeline JS -->
     <script src="https://unpkg.com/vis-timeline@7.7.2/standalone/umd/vis-timeline-graph2d.min.js"></script>
