@@ -288,6 +288,9 @@ body {
 [data-theme="dark"] .vis-item.cat-diversos { color: #cc78fa !important; background-color: rgba(175, 82, 222, 0.45) !important; border-color: #b862e3 !important; }
 
 /* Refinamento da Grade e Painel Esquerdo */
+.mobile-text { display: none; }
+.desktop-text { display: inline; }
+
 .vis-labelset .vis-label { 
     color: var(--text-color); 
     border-color: var(--border-color); 
@@ -342,4 +345,16 @@ body {
         font-size: 0.85rem;
         padding: 4px 6px;
     }
+
+    /* Reduzir drasticamente a largura do menu esquerdo */
+    .vis-labelset {
+        width: 48px !important;
+    }
+    .vis-labelset .vis-label {
+        padding: 6px 4px !important;
+        justify-content: center;
+        font-size: 0.75rem !important;
+    }
+    .desktop-text { display: none !important; }
+    .mobile-text { display: inline !important; }
 }

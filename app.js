@@ -225,8 +225,27 @@ document.addEventListener('DOMContentLoaded', () => {
         zoomKey: 'ctrlKey',
         groupTemplate: function(group) {
             if (!group) return;
+            
+            let shortContent = group.content;
+            if (group.treeLevel === 1) {
+                const words = group.content.split(' ').filter(w => w.trim() !== '');
+                if (words.length === 1) shortContent = words[0].substring(0,3);
+                else shortContent = words[0][0].toUpperCase() + words[words.length-1][0].toUpperCase();
+            } else {
+                if (group.content === 'Vida') shortContent = 'Vid';
+                else if (group.content === 'Estado') shortContent = 'Est';
+                else if (group.content === 'Saúde') shortContent = 'Saú';
+                else if (group.content === 'Eventos') shortContent = 'Eve';
+                else if (group.content === 'Patrimônio') shortContent = 'Pat';
+                else if (group.content === 'Diversos') shortContent = 'Div';
+                else shortContent = group.content.substring(0,3);
+            }
+
             const el = document.createElement('div');
-            el.innerHTML = `<span style="font-weight: ${group.treeLevel === 1 ? '600' : '400'};">${group.content}</span>`;
+            el.innerHTML = `
+                <span class="desktop-text" style="font-weight: ${group.treeLevel === 1 ? '600' : '400'};">${group.content}</span>
+                <span class="mobile-text" style="font-weight: ${group.treeLevel === 1 ? '600' : '400'};" title="${group.content}">${shortContent}</span>
+            `;
             return el;
         },
         template: function (item, element, data) {

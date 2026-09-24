@@ -1,7 +1,7 @@
-const CACHE_NAME = 'timeline-cache-v4';
+const CACHE_NAME = 'timeline-cache-v5';
 const urlsToCache = [
   './index.html',
-  './style.css?v=19',
+  './style.css?v=20',
   './app.js',
   './data.js'
 ];
