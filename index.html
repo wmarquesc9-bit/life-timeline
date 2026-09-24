@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Life Timeline</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Vis Timeline CSS -->
+    <link href="https://unpkg.com/vis-timeline@7.7.2/styles/vis-timeline-graph2d.min.css" rel="stylesheet" type="text/css" />
+    <!-- html2canvas for image export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- PWA & Mobile Optimization -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1e1e1e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="stylesheet" href="style.css?v=17">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-title">
+                <h1>Life Timeline</h1>
+                <span class="subtitle">Personal CRM & Events (v17)</span>
+            </div>
+            <div class="header-controls">
+                <button id="btn-export-opml" class="btn btn-secondary btn-small">📑 OPML</button>
+                <button id="btn-export-text" class="btn btn-secondary btn-small">📄 Texto</button>
+                <button id="btn-export-image" class="btn btn-secondary btn-small">🖼️ Imagem</button>
+                <div class="toolbar-divider" style="height: 20px; background-color: var(--border-color); margin: 0 4px;"></div>
+                <input type="file" id="file-import-json" accept=".json" style="display: none;" />
+                <button id="btn-import-json" class="btn btn-secondary btn-small">📂 Importar</button>
+                <button id="btn-export-json" class="btn btn-secondary btn-small">💾 Backup</button>
+                <button id="theme-toggle" class="btn btn-small" style="margin-left: 4px;">Mudar Tema</button>
+            </div>
+        </header>
+
+        <!-- Toolbar de Zoom, Ações e Filtros -->
+        <div class="toolbar">
+            <span class="toolbar-hint" style="margin-left: 0; margin-right: 0;">Zoom:</span>
+            <div style="display: flex; gap: 2px;">
+                <button id="btn-zoom-in" class="btn btn-secondary btn-small">+</button>
+                <button id="btn-zoom-out" class="btn btn-secondary btn-small">-</button>
+            </div>
+            
+            <button id="btn-fit" class="btn btn-secondary btn-small">🎯 Tudo</button>
+            
+            <div class="toolbar-divider"></div>
+            
+            <button id="btn-manage-people" class="btn btn-secondary btn-small">👤 Pessoas</button>
+            
+            <div class="toolbar-divider"></div>
+            
+            <div class="toolbar-filter">
+                <label>Anos:</label>
+                <input type="number" id="filter-start" placeholder="Início" min="1900" max="2100" value="2000" />
+                <span>-</span>
+                <input type="number" id="filter-end" placeholder="Fim" min="1900" max="2100" value="2030" />
+                <button id="btn-filter-year" class="btn btn-small">Ir</button>
+            </div>
+
+            <div class="toolbar-divider"></div>
+            
+            <label style="display: flex; align-items: center; gap: 2px; font-size: 0.85rem; cursor: pointer;">
+                <input type="checkbox" id="toggle-duration" />
+                Duração
+            </label>
+
+            <div class="toolbar-divider"></div>
+            
+            <span class="toolbar-hint" style="margin-left: 0; margin-right: 2px;">Cat.:</span>
+            <label class="cat-toggle"><input type="checkbox" value="Vida" checked> Vida</label>
+            <label class="cat-toggle"><input type="checkbox" value="Estado" checked> Estado</label>
+            <label class="cat-toggle"><input type="checkbox" value="Saúde" checked> Saúde</label>
+            <label class="cat-toggle"><input type="checkbox" value="Eventos" checked> Eventos</label>
+            <label class="cat-toggle"><input type="checkbox" value="Patrimônio" checked> Patrimônio</label>
+            <label class="cat-toggle"><input type="checkbox" value="Diversos" checked> Diversos</label>
+        </div>
+
+        <!-- Main Workspace -->
+        <main class="workspace">
+            <!-- Timeline Container -->
+            <div id="timeline-container"></div>
+        </main>
+    </div>
+
+    <!-- Modal for Edit/Add Event -->
+    <div id="event-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h2 id="modal-title">Adicionar Evento</h2>
+            <div class="form-group">
+                <label>Título / Descrição:</label>
+                <input type="text" id="event-text" placeholder="Ex: Viagem para Paris" />
+            </div>
+            <div class="form-group">
+                <label>Tipo de Evento:</label>
+                <select id="event-type">
+                    <option value="point">Ponto Único (ex: Nascimento, Compra de TV)</option>
+                    <option value="range">Período (ex: Casamento, Moradia, Faculdade)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Data de Início:</label>
+                <input type="date" id="event-start" />
+            </div>
+            <div class="form-group" id="group-end-date" style="display: none;">
+                <label>Data de Término:</label>
+                <div style="display: flex; gap: 8px; align-items: center; width: 100%;">
+                    <input type="date" id="event-end" style="flex: 1;" />
+                    <label style="display: flex; align-items: center; gap: 4px; font-size: 0.85rem; margin: 0; cursor: pointer; white-space: nowrap;">
+                        <input type="checkbox" id="event-ongoing" />
+                        Em andamento
+                    </label>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button id="modal-cancel" class="btn btn-secondary">Cancelar</button>
+                <button id="modal-save" class="btn">Salvar Evento</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Gerenciar Pessoas -->
+    <div id="people-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h2>Gerenciar Pessoas</h2>
+            <div class="form-group" style="display: flex; gap: 8px; align-items: center; margin-top: 12px;">
+                <input type="text" id="new-person-name" placeholder="Nome da nova pessoa" style="flex: 1;" />
+                <button id="btn-add-person" class="btn btn-small">Adicionar</button>
+            </div>
+            
+            <div class="people-list-container" style="max-height: 250px; overflow-y: auto; margin-top: 16px; border: 1px solid var(--border-color); border-radius: 6px; padding: 4px; background: var(--input-bg);">
+                <ul id="people-list" style="list-style: none; padding: 0; margin: 0;">
+                    <!-- Preenchido via JS -->
+                </ul>
+            </div>
+            
+            <div class="modal-actions" style="margin-top: 16px;">
+                <button id="people-modal-close" class="btn btn-secondary">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vis Timeline JS -->
+    <script src="https://unpkg.com/vis-timeline@7.7.2/standalone/umd/vis-timeline-graph2d.min.js"></script>
+    <!-- App Scripts -->
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+
+    <!-- PWA Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+                .then(() => console.log('PWA Service Worker Registrado com sucesso'))
+                .catch(err => console.error('Erro no Service Worker:', err));
+        }
+    </script>
+</body>
+</html>
