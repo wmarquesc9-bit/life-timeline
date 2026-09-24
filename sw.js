@@ -1,9 +1,9 @@
-const CACHE_NAME = 'timeline-cache-v5';
+const CACHE_NAME = 'timeline-cache-v6';
 const urlsToCache = [
   './index.html',
-  './style.css?v=20',
-  './app.js',
-  './data.js'
+  './style.css?v=21',
+  './app.js?v=21',
+  './data.js?v=21'
 ];
 
 self.addEventListener('install', event => {
